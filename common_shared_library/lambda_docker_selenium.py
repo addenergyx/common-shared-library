@@ -1,7 +1,5 @@
 from selenium import webdriver
 from tempfile import mkdtemp
-from selenium.webdriver.common.by import By
-
 
 def get_driver():
     options = webdriver.ChromeOptions()
@@ -20,8 +18,5 @@ def get_driver():
     options.add_argument(f"--data-path={mkdtemp()}")
     options.add_argument(f"--disk-cache-dir={mkdtemp()}")
     options.add_argument("--remote-debugging-port=9222")
-
-    # chrome = webdriver.Chrome(options=options, service=service)
-    # chrome.get("https://example.com/")
 
     return webdriver.Chrome(options=options, service=service)
