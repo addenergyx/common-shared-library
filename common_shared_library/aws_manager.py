@@ -2,9 +2,10 @@ import boto3
 import os
 from dotenv import load_dotenv
 
+
 class AWSConnector:
-    def __init__(self):
-        self.AWS_DEFAULT_REGION = "eu-west-1"
+    def __init__(self, region_name="eu-west-1"):
+        self.AWS_DEFAULT_REGION = region_name
         self.session = self.get_session()
 
     @staticmethod
@@ -15,12 +16,11 @@ class AWSConnector:
                 aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
                 aws_session_token=os.environ["AWS_SESSION_TOKEN"]
             )
-        else:
-            load_dotenv(verbose=True, override=True)
-            return boto3.Session(
-                aws_access_key_id=os.environ["AWS_ACCESS_KEY"],
-                aws_secret_access_key=os.environ["AWS_SECRET_KEY"],
-            )
+        load_dotenv(verbose=True, override=True)
+        return boto3.Session(
+            aws_access_key_id=os.environ["AWS_ACCESS_KEY"],
+            aws_secret_access_key=os.environ["AWS_SECRET_KEY"],
+        )
 
     def connect_to_dynamodb(self, table_name):
         dynamodb = self.session.resource('dynamodb', region_name=self.AWS_DEFAULT_REGION)
@@ -34,10 +34,17 @@ class AWSConnector:
 
     @staticmethod
     def queue_active(queue):
-        if int(queue.attributes["ApproximateNumberOfMessages"]) > 0 and queue.attributes["ApproximateNumberOfMessagesNotVisible"] == '0':
-            return True
-        else:
-            return False
+        return (
+                int(queue.attributes["ApproximateNumberOfMessages"]) > 0
+                and queue.attributes["ApproximateNumberOfMessagesNotVisible"] == '0'
+        )
+
+    @staticmethod
+    def fetch_current_data_from_dynamodb(table_name):
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table(table_name)
+        response = table.scan()
+        return {item['merchant_id']: item for item in response['Items']}
 
 # Usage
 # aws_connector = AWSConnector()
