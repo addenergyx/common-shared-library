@@ -5,8 +5,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class NotificationManager:
-    def __init__(self, notification_token, notification_user=os.getenv('NOTIFICATION_USER')):
+    def __init__(self, notification_token=os.getenv('NOTIFICATION_TOKEN'),
+                 notification_user=os.getenv('NOTIFICATION_USER')):
         self.notification_token = notification_token
         self.notification_user = notification_user
 
