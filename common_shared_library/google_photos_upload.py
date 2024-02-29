@@ -16,9 +16,7 @@ import requests
 import boto3
 import logging
 
-import sys
-sys.path.append('../')
-from common.google_apis import create_service
+from .google_apis import create_service
 
 # from google_apis import create_service
 
