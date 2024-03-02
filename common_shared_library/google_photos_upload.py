@@ -99,7 +99,7 @@ def upload_image(image_path, upload_file_name, token=token):
 
     img = open(image_path, 'rb').read()
     response = requests.post(upload_url, data=img, headers=headers)
-    print('\nUpload token: {0}'.format(response.content.decode('utf-8')))
+    # print('\nUpload token: {0}'.format(response.content.decode('utf-8')))
     logger.info('Upload token: {0}'.format(response.content.decode('utf-8')))
 
     return response
