@@ -189,11 +189,11 @@ def get_media_items_name(album_name='Giftcards', filter_=[]):
                                                                                                  media_items]
 
 
-def remove_media(media_ids, album_name='Giftcards'):
+def remove_media(media_ids, album_name='Giftcards', request_body=None):
     # Make note in description to delete giftcard from main photos gallery
-    request_body = {
-        "description": "Balance is 0. Delete this giftcard"
-    }
+
+    if not request_body:
+        request_body = {}
 
     for id_ in media_ids:
         response = service.mediaItems().patch(id=id_, updateMask='description', body=request_body).execute()
