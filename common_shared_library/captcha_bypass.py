@@ -28,6 +28,6 @@ class CaptchaBypass(object):
             logger.error(f"task finished with error: {solver.error_code}")
         else:
             # print(f"Captcha Response generated: {str(g_response)}")
-            logger.info(f"Captcha Response generated: *****{str(g_response)[:-5]}")
+            logger.info(f"Captcha Response generated: *****{str(g_response)[-5:]}")
 
         return g_response
