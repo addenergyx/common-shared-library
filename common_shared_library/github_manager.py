@@ -9,9 +9,11 @@ class GithubHandler:
         self.user = user
         self.access_token = access_token
 
-    def download_csv(self, raw_csv_url: str) -> pd.DataFrame:
+    def download_csv(self, raw_csv_url: str, private_repo: bool = False) -> pd.DataFrame:
         github_session = requests.Session()
-        github_session.auth = (self.user, self.access_token)
+
+        if private_repo:
+            github_session.auth = (self.user, self.access_token)
 
         download = github_session.get(raw_csv_url).content
         return pd.read_csv(io.StringIO(download.decode('utf-8')), on_bad_lines='skip')
