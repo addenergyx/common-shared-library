@@ -42,6 +42,7 @@ if os.getenv('AWS_LAMBDA_FUNCTION_NAME'):
 
 else:
     # SERVICE_ACCOUNT_FILE = os.path.join(os.getcwd(), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # IDE/Docker
+    logger.info("SERVICE_ACCOUNT_FILE: " + os.getenv('SERVICE_ACCOUNT_FILE'))
     SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(os.getcwd()), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # Terminal
     creds = google.auth.load_credentials_from_file(SERVICE_ACCOUNT_FILE, SCOPES)[0]
 
