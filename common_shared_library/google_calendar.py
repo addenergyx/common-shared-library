@@ -11,6 +11,9 @@ import logging
 
 from googleapiclient.discovery import build
 import google.auth
+from google.oauth2 import service_account
+import boto3
+import json
 
 from dotenv import load_dotenv
 load_dotenv(verbose=True, override=True)
@@ -27,10 +30,21 @@ SCOPES = ['https://www.googleapis.com/auth/calendar',
 API_NAME = 'calendar'
 API_VERSION = 'v3'
 CALENDAR_ID = os.getenv('CALENDAR_ID') # Default to fitness calendar
-# SERVICE_ACCOUNT_FILE = os.path.join(os.getcwd(), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # IDE/Docker
-SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(os.getcwd()), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # Terminal
 
-creds = google.auth.load_credentials_from_file(SERVICE_ACCOUNT_FILE, SCOPES)[0]
+if os.getenv('AWS_LAMBDA_FUNCTION_NAME'):
+    s3_client = boto3.client('s3', aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+    logger.info(s3_client)
+    s3_response_object = s3_client.get_object(Bucket="adoka-google-apis", Key='token files/' + "service_account_credentials.json")
+    service_account_file_content = s3_response_object['Body'].read()
+    service_account_info = json.loads(service_account_file_content)
+    creds = service_account.Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+
+else:
+    # SERVICE_ACCOUNT_FILE = os.path.join(os.getcwd(), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # IDE/Docker
+    SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(os.getcwd()), 'common', os.getenv('SERVICE_ACCOUNT_FILE'))  # Terminal
+    creds = google.auth.load_credentials_from_file(SERVICE_ACCOUNT_FILE, SCOPES)[0]
+
 service = build(API_NAME, API_VERSION, credentials=creds)
 
 
