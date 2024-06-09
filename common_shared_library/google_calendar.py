@@ -33,8 +33,8 @@ CALENDAR_ID = os.getenv('CALENDAR_ID') # Default to fitness calendar
 
 if os.getenv('AWS_LAMBDA_FUNCTION_NAME'):
     s3_client = boto3.client('s3', aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
-    logger.info(s3_client)
+                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+                             aws_session_token=os.environ["AWS_SESSION_TOKEN"])
     s3_response_object = s3_client.get_object(Bucket="adoka-google-apis", Key='token files/' + "service_account_credentials.json")
     service_account_file_content = s3_response_object['Body'].read()
     service_account_info = json.loads(service_account_file_content)
