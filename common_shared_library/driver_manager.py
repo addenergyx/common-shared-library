@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -25,8 +27,17 @@ class DriverManager:
         else:
             # For development environment, use ChromeDriverManager
             from webdriver_manager.chrome import ChromeDriverManager
-            service = Service(ChromeDriverManager().install())
-            self.driver = webdriver.Chrome(service=service, options=options)
+            # service = Service(ChromeDriverManager().install())
+            # self.driver = webdriver.Chrome(service=service, options=options)
+
+            # https://github.com/SergeyPirogov/webdriver_manager/issues/665
+            driver_path = ChromeDriverManager().install()
+            if driver_path:
+                driver_name = driver_path.split('/')[-1]
+                if driver_name != "chromedriver":
+                    driver_path = "/".join(driver_path.split('/')[:-1] + ["chromedriver"])
+                    os.chmod(driver_path, 0o755)
+            self.driver = webdriver.Chrome(service=Service(driver_path), options=options)
 
         return self.driver
 
