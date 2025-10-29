@@ -10,15 +10,16 @@ ANTICAPTCHA_KEY = os.getenv('ANTICAPTCHA_KEY')
 logger = logging.getLogger(__name__)
 
 class CaptchaBypass(object):
-    def __init__(self, sitekey, url):
+    def __init__(self, sitekey, url, anticaptcha_key=None):
         self.sitekey = sitekey
         self.url = url
+        self.anticaptcha_key = anticaptcha_key or ANTICAPTCHA_KEY
 
     def bypass(self):
 
         solver = recaptchaV2Proxyless()
         solver.set_verbose(1)
-        solver.set_key(ANTICAPTCHA_KEY)
+        solver.set_key(self.anticaptcha_key)
         solver.set_website_url(self.url)
         solver.set_website_key(self.sitekey)
 
